@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # Project apps
     'target',
     'book',
+    'custom_user',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'custom_user.CustomUser'
