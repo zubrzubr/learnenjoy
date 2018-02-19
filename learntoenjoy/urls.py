@@ -4,6 +4,8 @@ from django.contrib import admin
 
 api_urls = [
     url(r'^api/v1/', include('book.urls')),
+    url(r'^api/v1/', include('target.urls')),
+    url(r'^api/v1/', include('custom_user.urls')),
 ]
 
 common_urls = [

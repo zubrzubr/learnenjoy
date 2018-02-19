@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from book.models import Book
-from book.serializers import BookSerializer
+from book.serializers import BookDetailSerializer
 
 
 class BooksViewSet(viewsets.ModelViewSet):
@@ -29,4 +29,4 @@ class BooksViewSet(viewsets.ModelViewSet):
     ]
     """
     queryset = Book.objects.all()
-    serializer_class = BookSerializer
+    serializer_class = BookDetailSerializer

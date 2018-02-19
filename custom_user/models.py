@@ -15,4 +15,4 @@ class CustomUser(AbstractUser):
     city = models.CharField(_("User's city"), max_length=30, blank=True)
     birth_date = models.DateField(_("User's birth date"), null=True, blank=True)
     favorite_books = models.ManyToManyField(Book, related_name="users_favorite_books", blank=True)
-    targets = models.ForeignKey(Target, related_name="users_targets", on_delete=models.CASCADE, null=True, blank=True)
+    targets = models.ManyToManyField(Target, related_name="users_targets")
