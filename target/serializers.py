@@ -4,12 +4,17 @@ from target.models import Target
 from book.serializers import BookBaseSerializer
 
 
-class TargetSerializer(serializers.ModelSerializer):
+class BaseTargetSerializer(serializers.ModelSerializer):
     """
-    Serializer to present all targets.
+    Serializer for target creation.
     """
-    book = BookBaseSerializer(read_only=True, many=False)
-
     class Meta:
         model = Target
         fields = ('title', 'description', 'book', 'start_date', 'end_date')
+
+
+class TargetSerializer(BaseTargetSerializer):
+    """
+    Serializer to present all targets.
+    """
+    book = BookBaseSerializer(many=False)
