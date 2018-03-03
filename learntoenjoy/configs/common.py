@@ -28,6 +28,7 @@ class BaseSettings(Configuration):
         'django.contrib.staticfiles',
         # 3-rd party apps
         'rest_framework',
+        'rest_framework_swagger',
         # Project apps
         'target',
         'book',
