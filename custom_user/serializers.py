@@ -5,20 +5,19 @@ from custom_user.models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
     """
-    Serializer to present users. Response example:
-    [
-        {
-            "first_name": "User name",
-            "last_name": "Last name",
-            "bio": "Test bio",
-            "country": "Ukraine",
-            "city": "Kyiv",
-            "birth_date": "1991-11-11",
-            "favorite_books": [],
-            "targets": 1
-        }
-    ]
+    Serializer to present users.
     """
+    password = serializers.CharField(write_only=True)
+ 
     class Meta:
-        model = CustomUser
-        fields = ('first_name', 'last_name', 'bio', 'country', 'city', 'birth_date', 'favorite_books', 'targets')
+            model = CustomUser
+            fields = (
+                'first_name', 'last_name', 'email', 'username', 'password', 'bio', 'country', 'city',
+                'birth_date', 'favorite_books', 'targets'
+            )
+
+    def create(self, validated_data):
+        user=super(UserSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

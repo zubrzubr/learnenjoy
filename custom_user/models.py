@@ -15,4 +15,10 @@ class CustomUser(AbstractUser):
     city = models.CharField(_("User's city"), max_length=30, blank=True)
     birth_date = models.DateField(_("User's birth date"), null=True, blank=True)
     favorite_books = models.ManyToManyField(Book, related_name="users_favorite_books", blank=True)
-    targets = models.ManyToManyField(Target, related_name="users_targets")
+    targets = models.ManyToManyField(Target, related_name="users_targets", blank=True)
+
+    class Meta(object):
+        unique_together = ('email', 'username')
+
+    def __str__(self):
+        return self.email

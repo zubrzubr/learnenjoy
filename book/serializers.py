@@ -38,8 +38,8 @@ class BookDetailSerializer(BookBaseSerializer):
     """
     Serializer for details view for books. Presents data with related fields (authors and genres).
     """
-    genre = GenreSerializer(read_only=True, many=False)
+    genres = GenreSerializer(read_only=True, many=True)
 
     class Meta:
         model = Book
-        fields = ('id', 'title', 'description', 'authors', 'genre')
+        fields = ('id', 'title', 'description', 'authors', 'genres')

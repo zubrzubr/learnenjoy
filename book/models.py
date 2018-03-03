@@ -32,7 +32,7 @@ class Book(models.Model):
     title = models.CharField(_("Book's name"), max_length=255)
     description = models.TextField(_("Book's description"), max_length=1024)
     authors = models.ManyToManyField(Author, related_name="authors_books")
-    genre = models.ForeignKey(Genre, related_name="books", null=True, on_delete=models.PROTECT)
+    genres = models.ManyToManyField(Genre, related_name="books")
 
     def __str__(self):
         return self.title
