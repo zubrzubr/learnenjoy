@@ -11,6 +11,7 @@ api_urls = [
     url(api_v1_pattern, include('book.urls')),
     url(api_v1_pattern, include('target.urls')),
     url(api_v1_pattern, include('custom_user.urls')),
+    url(api_v1_pattern, include('reward.urls')),
 ]
 
 common_urls = [
