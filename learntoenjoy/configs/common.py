@@ -2,6 +2,7 @@ import os
 
 from configurations import Configuration, values
 
+
 class BaseSettings(Configuration):
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,6 +34,7 @@ class BaseSettings(Configuration):
         'target',
         'book',
         'custom_user',
+        'reward',
     ]
 
     MIDDLEWARE = [
@@ -65,7 +67,6 @@ class BaseSettings(Configuration):
 
     WSGI_APPLICATION = 'learntoenjoy.wsgi.application'
 
-
     # Database
     # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -75,7 +76,6 @@ class BaseSettings(Configuration):
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-
 
     # Password validation
     # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -95,7 +95,6 @@ class BaseSettings(Configuration):
         },
     ]
 
-
     # Internationalization
     # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -108,7 +107,6 @@ class BaseSettings(Configuration):
     USE_L10N = True
 
     USE_TZ = True
-
 
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/1.11/howto/static-files/
