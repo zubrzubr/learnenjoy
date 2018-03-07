@@ -37,6 +37,18 @@ class TestRegistrationView(object):
         expected_resp = {'email': ['Enter a valid email address.']}
         assert resp == expected_resp
 
+    def test_registration_should_be_invalid_if_email_is_empty(self, client):
+        user_list_url = reverse('users-list')
+        params = {
+            'username': 'test',
+            'email': ' ',
+            'password': 'test'
+        }
+        resp = simplejson.loads(client.post(user_list_url, params).content)
+        expected_resp = {'email': ['This field may not be blank.']}
+
+        assert resp == expected_resp
+
     def test_registration_should_be_invalid_if_empty_password(self, client):
         user_list_url = reverse('users-list')
         params = {
