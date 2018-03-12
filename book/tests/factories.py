@@ -23,8 +23,28 @@ class AuthorFactory(factory.django.DjangoModelFactory):
 class BookFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: 'title_%d' % n)
     description = factory.fuzzy.FuzzyText(length=100)
-    authors = factory.SubFactory(AuthorFactory)
-    genres = factory.SubFactory(GenreFactory)
+
+    @factory.post_generation
+    def authors(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if extracted:
+            # A list of groups were passed in, use them
+            for author in extracted:
+                self.authors.add(author)
+
+    @factory.post_generation
+    def genres(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if extracted:
+            # A list of groups were passed in, use them
+            for genre in extracted:
+                self.genres.add(genre)
 
     class Meta:
         model = Book

@@ -4,8 +4,6 @@ import factory.fuzzy
 from django.contrib.auth.models import Group
 
 from custom_user.models import CustomUser
-from book.tests.factories import BookFactory
-from target.tests.factories import TargetFactory
 
 
 class GroupFactory(factory.django.DjangoModelFactory):
@@ -26,8 +24,24 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = CustomUser
 
+    @factory.post_generation
+    def targets(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
 
-class UserFactoryWithBooksAndTargets(UserFactory):
-    favorites_books = factory.RelatedFactory(BookFactory, 'book')
-    targets = factory.RelatedFactory(TargetFactory, 'target')
+        if extracted:
+            # A list of groups were passed in, use them
+            for target in extracted:
+                self.targets.add(target)
 
+    @factory.post_generation
+    def favorites_books(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if extracted:
+            # A list of groups were passed in, use them
+            for book in extracted:
+                self.favorites_books.add(book)
