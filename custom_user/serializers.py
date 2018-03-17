@@ -14,7 +14,7 @@ class BaseUserSerializer(serializers.ModelSerializer):
         )
 
 
-class CreateUserSerialzer(serializers.ModelSerializer):
+class CreateUserSerializer(serializers.ModelSerializer):
     """
     Used for user's registration
     """
@@ -29,7 +29,7 @@ class CreateUserSerialzer(serializers.ModelSerializer):
         )
    
     def create(self, validated_data):
-        user = super(CreateUserSerialzer, self).create(validated_data)
+        user = super(CreateUserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
         return user

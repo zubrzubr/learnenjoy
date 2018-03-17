@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 
 from custom_user.models import CustomUser
-from custom_user.serializers import BaseUserSerializer, CreateUserSerialzer
+from custom_user.serializers import BaseUserSerializer, CreateUserSerializer
 from custom_user.permissions import IsRegisteredUserOrReadonly
 
 
@@ -16,5 +16,5 @@ class CustomUsersViewSet(viewsets.ModelViewSet):
     
     def get_serializer_class(self):
         if self.action == 'create':
-            return CreateUserSerialzer
+            return CreateUserSerializer
         return BaseUserSerializer
