@@ -1,7 +1,7 @@
 from common.permissions import BaseIsOwnerOrReadOnly
 
 
-class IsRegisteredUserOrReadonly(BaseIsOwnerOrReadOnly):
+class IsRegisteredUserOwnerOrReadonly(BaseIsOwnerOrReadOnly):
     """
     Custom permission Class to override _get_obj method
     """

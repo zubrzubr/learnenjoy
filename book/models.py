@@ -33,6 +33,7 @@ class Book(models.Model):
     description = models.TextField(_("Book's description"), max_length=1024)
     authors = models.ManyToManyField(Author, related_name="authors_books")
     genres = models.ManyToManyField(Genre, related_name="books")
+    page_count = models.PositiveIntegerField(_("Count of pages"), default=0)
 
     def __str__(self):
         return self.title

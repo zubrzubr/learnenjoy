@@ -15,6 +15,7 @@ class Target(models.Model):
     reward = models.ForeignKey(Reward, related_name='targets', on_delete=models.PROTECT)
     start_date = models.DateField(_("Target's start date"))
     end_date = models.DateField(_("Target's end date"))
+    current_page_progress = models.PositiveIntegerField(_("Current page progress"), default=0)
 
     def __str__(self):
         return self.title

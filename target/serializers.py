@@ -10,7 +10,7 @@ class BaseTargetSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Target
-        fields = ('title', 'description', 'book', 'start_date', 'end_date')
+        fields = ('title', 'description', 'book', 'current_page_progress', 'start_date', 'end_date')
 
 
 class TargetSerializer(BaseTargetSerializer):
