@@ -24,8 +24,8 @@ class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            'first_name', 'last_name', 'bio', 'country', 'city', 'email', 'username', 'password', 
-            'birth_date', 'favorite_books', 'targets'
+            'first_name', 'last_name', 'bio', 'country', 'city', 'email', 'username', 'password', 'birth_date',
+            'favorite_books', 'targets'
         )
    
     def create(self, validated_data):
@@ -33,3 +33,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class UpdateUserSerializer(CreateUserSerializer):
+    class Meta:
+        model = CustomUser
+        fields = (
+            'first_name', 'last_name', 'bio', 'country', 'city', 'birth_date', 'favorite_books', 'targets'
+        )

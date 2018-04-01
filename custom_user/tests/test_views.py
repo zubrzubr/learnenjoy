@@ -5,6 +5,9 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 
+from custom_user.tests.factories import UserFactory
+
+
 UserModel = get_user_model()
 
 
@@ -70,3 +73,75 @@ class TestRegistrationView(object):
         resp = simplejson.loads(client.post(user_list_url, params).content)
         expected_resp = {'username': ['This field may not be blank.']}
         assert resp == expected_resp
+
+    def test_should_return_three_users(self, client):
+        user_list_url = reverse('users-list')
+        users_count = 3
+
+        UserFactory.create(password='test_1')
+        UserFactory.create(password='test_2')
+        UserFactory.create(password='test_3')
+
+        resp = simplejson.loads(client.get(user_list_url).content)
+
+        assert users_count == len(resp)
+
+    def test_city_should_be_changed_after_put_request(self, client):
+        user_detail = reverse('users-detail', args=[1])
+        user_login = reverse('token_obtain_pair')
+        params = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'test'
+        }
+        UserFactory.create(**params)
+
+        user = UserModel.objects.get(username='test')
+        users_city_before = user.city
+
+        params.pop('email')
+        resp_login = simplejson.loads(client.post(user_login, params).content)
+
+        client.login(username='test', password='test')
+
+        token = "Bearer {}".format(resp_login.get('access'))
+
+        client.put(
+            user_detail, simplejson.dumps({'city': 'New city'}), content_type='application/json',
+            HTTP_AUTHORIZATION=token
+        )
+
+        user = UserModel.objects.get(username='test')
+        users_city_after = user.city
+
+        assert users_city_before != users_city_after
+
+    def test_email_should_not_be_changed_after_put_request(self, client):
+        user_detail = reverse('users-detail', args=[1])
+        user_login = reverse('token_obtain_pair')
+        params = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'test'
+        }
+        UserFactory.create(**params)
+
+        user = UserModel.objects.get(username='test')
+        users_email_before = user.email
+
+        params.pop('email')
+        resp_login = simplejson.loads(client.post(user_login, params).content)
+
+        client.login(username='test', password='test')
+
+        token = "Bearer {}".format(resp_login.get('access'))
+
+        client.put(
+            user_detail, simplejson.dumps({'email': 'new@new.ua'}), content_type='application/json',
+            HTTP_AUTHORIZATION=token
+        )
+
+        user = UserModel.objects.get(username='test')
+        users_email_after = user.email
+
+        assert users_email_before == users_email_after

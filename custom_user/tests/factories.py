@@ -20,6 +20,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     country = factory.Sequence(lambda n: 'test country %d' % n)
     city = factory.Sequence(lambda n: 'test city %d' % n)
     birth_date = factory.LazyFunction(datetime.datetime.utcnow)
+    password = factory.PostGenerationMethodCall('set_password')
 
     class Meta:
         model = CustomUser
