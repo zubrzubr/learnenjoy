@@ -87,22 +87,21 @@ class TestRegistrationView(object):
         assert users_count == len(resp)
 
     def test_city_should_be_changed_after_put_request(self, client):
-        user_detail = reverse('users-detail', args=[1])
-        user_login = reverse('token_obtain_pair')
         params = {
             'username': 'test',
             'email': 'test@test.com',
             'password': 'test'
         }
         UserFactory.create(**params)
-
         user = UserModel.objects.get(username='test')
+
+        user_detail = reverse('users-detail', args=[user.id])
+        user_login = reverse('token_obtain_pair')
+
         users_city_before = user.city
 
         params.pop('email')
         resp_login = simplejson.loads(client.post(user_login, params).content)
-
-        client.login(username='test', password='test')
 
         token = "Bearer {}".format(resp_login.get('access'))
 
@@ -117,22 +116,21 @@ class TestRegistrationView(object):
         assert users_city_before != users_city_after
 
     def test_email_should_not_be_changed_after_put_request(self, client):
-        user_detail = reverse('users-detail', args=[1])
-        user_login = reverse('token_obtain_pair')
         params = {
             'username': 'test',
             'email': 'test@test.com',
             'password': 'test'
         }
-        UserFactory.create(**params)
 
+        UserFactory.create(**params)
         user = UserModel.objects.get(username='test')
+        user_detail = reverse('users-detail', args=[user.id])
+        user_login = reverse('token_obtain_pair')
+
         users_email_before = user.email
 
         params.pop('email')
         resp_login = simplejson.loads(client.post(user_login, params).content)
-
-        client.login(username='test', password='test')
 
         token = "Bearer {}".format(resp_login.get('access'))
 
@@ -145,3 +143,36 @@ class TestRegistrationView(object):
         users_email_after = user.email
 
         assert users_email_before == users_email_after
+
+    def test_only_owner_can_change_user_profile(self, client):
+        user_login = reverse('token_obtain_pair')
+        params = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'test'
+        }
+        params_1 = {
+            'username': 'test_not_owner',
+            'email': 'test@test2.com',
+            'password': 'test'
+        }
+        UserFactory.create(**params)
+        UserFactory.create(**params_1)
+        user = UserModel.objects.get(username='test')
+
+        user_detail = reverse('users-detail', args=[user.id])
+
+        params_1.pop('email')
+        resp_login = simplejson.loads(client.post(user_login, params_1).content)
+
+        token = "Bearer {}".format(resp_login.get('access'))
+
+        resp = simplejson.loads(
+            client.put(
+                user_detail, simplejson.dumps({'email': 'new@new.ua'}), content_type='application/json',
+                HTTP_AUTHORIZATION=token
+            ).content
+        )
+        expected_resp = {'detail':'You do not have permission to perform this action.'}
+
+        assert resp == expected_resp
