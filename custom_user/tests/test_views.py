@@ -86,6 +86,17 @@ class TestRegistrationView(object):
 
         assert users_count == len(resp)
 
+    def test_should_not_return_superuser_in_response(self, client):
+        user_list_url = reverse('users-list')
+
+        UserFactory.create(username='su', password='test', is_superuser=True)
+        UserFactory.create(username='not_su', password='test_2', is_superuser=False)
+
+        resp = simplejson.loads(client.get(user_list_url).content)
+        resp_user_names = [resp_obj.get('username') for resp_obj in resp]
+
+        assert 'su' not in resp_user_names
+
     def test_city_should_be_changed_after_put_request(self, client):
         params = {
             'username': 'test',
