@@ -4,6 +4,7 @@ import simplejson
 from django.urls import reverse
 
 from book.tests.factories import BookFactory
+from custom_user.tests.factories import UserFactory
 from common.tests.utils import get_login_params_dict
 
 
@@ -40,6 +41,8 @@ class TestBooksView(object):
             'email': 'test@test.com',
             'password': 'test'
         }
+
+        UserFactory.create(**login_params)
 
         token_dict = get_login_params_dict(client, login_params)
 

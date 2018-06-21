@@ -179,7 +179,7 @@ class TestCustomUsersView(object):
         user_detail = reverse('users-detail', args=[user.id])
 
         params_1.pop('email')
-        token_dict = get_login_params_dict(client, params)
+        token_dict = get_login_params_dict(client, params_1)
 
         resp = simplejson.loads(
             client.put(

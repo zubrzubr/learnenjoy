@@ -5,7 +5,7 @@ from reward.views import RewardsViewSet
 
 
 router = routers.DefaultRouter()
-router.register(r'rewards', RewardsViewSet, base_name='rewards_view')
+router.register(r'rewards', RewardsViewSet, base_name='rewards')
 
 
 urlpatterns = [
