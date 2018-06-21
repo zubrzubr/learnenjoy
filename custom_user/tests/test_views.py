@@ -1,18 +1,18 @@
 import pytest
 import simplejson
 
-from django.urls import reverse
 from django.contrib.auth import get_user_model
-
+from django.urls import reverse
 
 from custom_user.tests.factories import UserFactory
+from common.tests.utils import get_login_params_dict
 
 
 UserModel = get_user_model()
 
 
 @pytest.mark.django_db
-class TestRegistrationView(object):
+class TestCustomUsersView(object):
     def test_registration_should_be_valid_and_create_user(self, client):
         user_list_url = reverse('users-list')
         params = {
@@ -86,6 +86,18 @@ class TestRegistrationView(object):
 
         assert users_count == len(resp)
 
+    def test_returned_fields(self, client):
+        user_list_url = reverse('users-list')
+
+        UserFactory.create(password='test_1')
+
+        resp = simplejson.loads(client.get(user_list_url).content)
+        
+        fields = resp[0].keys()
+        expected_fields = ['username', 'first_name', 'last_name', 'bio', 'country', 'city', 'birth_date', 'favorite_books', 'targets']
+        
+        assert list(fields) == expected_fields
+
     def test_should_not_return_superuser_in_response(self, client):
         user_list_url = reverse('users-list')
 
@@ -107,18 +119,15 @@ class TestRegistrationView(object):
         user = UserModel.objects.get(username='test')
 
         user_detail = reverse('users-detail', args=[user.id])
-        user_login = reverse('token_obtain_pair')
 
         users_city_before = user.city
 
         params.pop('email')
-        resp_login = simplejson.loads(client.post(user_login, params).content)
-
-        token = "Bearer {}".format(resp_login.get('access'))
+        
+        token_dict = get_login_params_dict(client, params)
 
         client.put(
-            user_detail, simplejson.dumps({'city': 'New city'}), content_type='application/json',
-            HTTP_AUTHORIZATION=token
+            user_detail, simplejson.dumps({'city': 'New city'}), **token_dict
         )
 
         user = UserModel.objects.get(username='test')
@@ -136,18 +145,15 @@ class TestRegistrationView(object):
         UserFactory.create(**params)
         user = UserModel.objects.get(username='test')
         user_detail = reverse('users-detail', args=[user.id])
-        user_login = reverse('token_obtain_pair')
 
         users_email_before = user.email
 
         params.pop('email')
-        resp_login = simplejson.loads(client.post(user_login, params).content)
 
-        token = "Bearer {}".format(resp_login.get('access'))
+        token_dict = get_login_params_dict(client, params)
 
         client.put(
-            user_detail, simplejson.dumps({'email': 'new@new.ua'}), content_type='application/json',
-            HTTP_AUTHORIZATION=token
+            user_detail, simplejson.dumps({'email': 'new@new.ua'}), **token_dict
         )
 
         user = UserModel.objects.get(username='test')
@@ -156,7 +162,6 @@ class TestRegistrationView(object):
         assert users_email_before == users_email_after
 
     def test_only_owner_can_change_user_profile(self, client):
-        user_login = reverse('token_obtain_pair')
         params = {
             'username': 'test',
             'email': 'test@test.com',
@@ -174,16 +179,13 @@ class TestRegistrationView(object):
         user_detail = reverse('users-detail', args=[user.id])
 
         params_1.pop('email')
-        resp_login = simplejson.loads(client.post(user_login, params_1).content)
-
-        token = "Bearer {}".format(resp_login.get('access'))
+        token_dict = get_login_params_dict(client, params)
 
         resp = simplejson.loads(
             client.put(
-                user_detail, simplejson.dumps({'email': 'new@new.ua'}), content_type='application/json',
-                HTTP_AUTHORIZATION=token
+                user_detail, simplejson.dumps({'email': 'new@new.ua'}), **token_dict
             ).content
         )
-        expected_resp = {'detail':'You do not have permission to perform this action.'}
+        expected_resp = {'detail': 'You do not have permission to perform this action.'}
 
         assert resp == expected_resp
