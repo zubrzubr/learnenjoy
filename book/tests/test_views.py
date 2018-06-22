@@ -3,7 +3,7 @@ import simplejson
 
 from django.urls import reverse
 
-from book.tests.factories import BookFactory
+from book.tests.factories import BookFactory, AuthorFactory, GenreFactory
 from custom_user.tests.factories import UserFactory
 from common.tests.utils import get_login_params_dict
 
@@ -74,11 +74,28 @@ class TestBookDetailView(object):
             'page_count': 500,
             'description': 'test_description'
         }
-        book = BookFactory.create(**book_params)
+        author_params = {
+            'first_name':'John', 
+            'last_name':'Dad',
+            'bio': 'test'
+        }
+        genre_params = {
+            'title': 'test',
+            'description': 'test'
+        }
+        author = AuthorFactory.create(**author_params)
+        genre = GenreFactory.create(**genre_params)
+        book = BookFactory.create(**book_params, authors=[author], genres=[genre])
         books_url = reverse('books-detail', args=[book.id])
         
         resp = simplejson.loads(client.get(books_url).content)
-
-        assert book_params.get('title') == resp.get('title')
-        assert book_params.get('page_count') == resp.get('page_count')
-        assert book_params.get('description') == resp.get('description')
+        expected_resp = {
+            'id': 1, 
+            'title': 'test', 
+            'page_count': 500, 
+            'description': 'test_description', 
+            'authors': [{'first_name': 'John', 'last_name': 'Dad', 'bio': 'test'}], 
+            'genres': [{'title': 'test', 'description': 'test'}]
+            }
+        
+        assert resp == expected_resp
