@@ -10,14 +10,26 @@ from common.tests.utils import get_login_params_dict
 
 @pytest.mark.django_db
 class TestBooksView(object):
-    def test_books_list_view_should_return_one_book(self, client):
+    def test_books_list_view_should_return_three_books(self, client):
+        books_url = reverse('books-list')
+        BookFactory.create()
+        BookFactory.create()
+        BookFactory.create()
+        
+        expected_len = 3
+        resp = simplejson.loads(client.get(books_url).content)
+
+        assert len(resp) == expected_len
+
+    def test_books_returned_fields(self, client):
         books_url = reverse('books-list')
         BookFactory.create()
         
-        expected_len = 1
-        resp = simplejson.loads(client.post(books_url).content)
+        resp = simplejson.loads(client.get(books_url).content)
+        resp_keys = resp[0].keys()
+        expected_keys = ['id', 'title', 'authors']
 
-        assert len(resp) == expected_len
+        assert expected_keys == list(resp_keys)
 
     def test_not_authenticed_users_can_not_add_book(self, client):
         books_url = reverse('books-list')
