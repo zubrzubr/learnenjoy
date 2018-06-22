@@ -64,3 +64,21 @@ class TestBooksView(object):
         expected_resp_title = 'Lord of the rings'
 
         assert expected_resp_title == resp.get('title')
+
+
+@pytest.mark.django_db
+class TestBookDetailView(object):
+    def test_books_detail_view_get_detail_book_page(self, client):
+        book_params = {
+            'title': 'test',
+            'page_count': 500,
+            'description': 'test_description'
+        }
+        book = BookFactory.create(**book_params)
+        books_url = reverse('books-detail', args=[book.id])
+        
+        resp = simplejson.loads(client.get(books_url).content)
+
+        assert book_params.get('title') == resp.get('title')
+        assert book_params.get('page_count') == resp.get('page_count')
+        assert book_params.get('description') == resp.get('description')
