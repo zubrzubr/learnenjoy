@@ -31,7 +31,7 @@ class TestRewardView(object):
 
         assert expected_keys == list(resp_keys)
 
-    def test_not_authenticed_users_can_not_add_reward(self, client):
+    def test_not_authenticated_users_can_not_add_reward(self, client):
         rewards_url = reverse('rewards-list')
         params = {
             'name': 'laptop',
@@ -43,7 +43,7 @@ class TestRewardView(object):
 
         assert resp == expected_resp
 
-    def test_authenticed_users_can_add_reward(self, client):
+    def test_authenticated_users_can_add_reward(self, client):
         rewards_url = reverse('rewards-list')
 
         params = simplejson.dumps({
