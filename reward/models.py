@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from common.abstract_models import OwnerModel
 
-class Reward(models.Model):
+
+class Reward(OwnerModel):
     """
     Rewards's model to present rewards which related to targets
     """

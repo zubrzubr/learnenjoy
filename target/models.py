@@ -3,9 +3,10 @@ from django.utils.translation import ugettext as _
 
 from book.models import Book
 from reward.models import Reward
+from common.abstract_models import OwnerModel
 
 
-class Target(models.Model):
+class Target(OwnerModel):
     """
     Target's model for tracking user's targets
     """

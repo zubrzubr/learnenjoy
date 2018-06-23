@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from common.abstract_models import OwnerModel
+
 
 class Author(models.Model):
     """
@@ -25,7 +27,7 @@ class Genre(models.Model):
         return self.title
 
 
-class Book(models.Model):
+class Book(OwnerModel):
     """
     Model to define book for user's targets
     """

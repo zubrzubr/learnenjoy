@@ -27,11 +27,12 @@ class BookBaseSerializer(serializers.ModelSerializer):
     """
     Base serializer for books. Presents id, title and authors.
     """
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     authors = AuthorSerializer(read_only=True, many=True)
 
     class Meta:
         model = Book
-        fields = ('id', 'title', 'authors')
+        fields = ('id', 'title', 'authors', 'owner')
 
 
 class BookDetailSerializer(BookBaseSerializer):

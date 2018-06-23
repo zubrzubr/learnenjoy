@@ -94,7 +94,9 @@ class TestCustomUsersView(object):
         resp = simplejson.loads(client.get(user_list_url).content)
         
         fields = resp[0].keys()
-        expected_fields = ['username', 'first_name', 'last_name', 'bio', 'country', 'city', 'birth_date', 'favorite_books', 'targets']
+        expected_fields = [
+            'username', 'first_name', 'last_name', 'bio', 'country', 'city', 'birth_date', 'favorite_books', 'targets'
+        ]
         
         assert list(fields) == expected_fields
 
@@ -109,6 +111,9 @@ class TestCustomUsersView(object):
 
         assert 'su' not in resp_user_names
 
+
+@pytest.mark.django_db
+class TestCustomUsersDetailView(object):
     def test_city_should_be_changed_after_put_request(self, client):
         params = {
             'username': 'test',
@@ -161,7 +166,7 @@ class TestCustomUsersView(object):
 
         assert users_email_before == users_email_after
 
-    def test_only_owner_can_change_user_profile(self, client):
+    def test_not_owner_can_not_change_user_profile(self, client):
         params = {
             'username': 'test',
             'email': 'test@test.com',
@@ -189,3 +194,26 @@ class TestCustomUsersView(object):
         expected_resp = {'detail': 'You do not have permission to perform this action.'}
 
         assert resp == expected_resp
+
+    def test_owner_can_change_user_profile(self, client):
+        params = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'test',
+            'city': 'Kyiv',
+        }
+        new_city = 'Lviv'
+        UserFactory.create(**params)
+        user = UserModel.objects.get(username='test')
+
+        user_detail = reverse('users-detail', args=[user.id])
+
+        token_dict = get_login_params_dict(client, params)
+
+        resp = simplejson.loads(
+            client.put(
+                user_detail, simplejson.dumps({'city': new_city}), **token_dict
+            ).content
+        )
+
+        assert resp.get('city') == new_city

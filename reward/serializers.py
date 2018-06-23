@@ -7,6 +7,8 @@ class RewardSerializer(serializers.ModelSerializer):
     """
     Main reward's serializer
     """
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Reward
-        fields = ('id', 'name', 'url')
+        fields = ('id', 'name', 'url', 'owner')

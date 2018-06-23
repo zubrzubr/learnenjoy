@@ -8,9 +8,11 @@ class BaseTargetSerializer(serializers.ModelSerializer):
     """
     Serializer for target creation.
     """
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Target
-        fields = ('title', 'description', 'book', 'current_page_progress', 'start_date', 'end_date')
+        fields = ('title', 'description', 'book', 'current_page_progress', 'start_date', 'end_date', 'owner')
 
 
 class TargetSerializer(BaseTargetSerializer):

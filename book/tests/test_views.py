@@ -6,6 +6,7 @@ from django.urls import reverse
 from book.tests.factories import BookFactory, AuthorFactory, GenreFactory
 from custom_user.tests.factories import UserFactory
 from common.tests.utils import get_login_params_dict
+from book.models import Book
 
 
 @pytest.mark.django_db
@@ -31,7 +32,7 @@ class TestBooksView(object):
 
         assert expected_keys == list(resp_keys)
 
-    def test_not_authenticed_users_can_not_add_book(self, client):
+    def test_not_authenticated_users_can_not_add_book(self, client):
         books_url = reverse('books-list')
         params = {
             'title': 'Lord of the rings'
@@ -42,7 +43,7 @@ class TestBooksView(object):
 
         assert resp == expected_resp
     
-    def test_authenticed_users_can_add_book(self, client):
+    def test_authenticated_users_can_add_book(self, client):
         books_url = reverse('books-list')
 
         params = simplejson.dumps({
@@ -96,6 +97,80 @@ class TestBookDetailView(object):
             'description': 'test_description', 
             'authors': [{'first_name': 'John', 'last_name': 'Dad', 'bio': 'test'}], 
             'genres': [{'title': 'test', 'description': 'test'}]
-            }
+        }
         
         assert resp == expected_resp
+
+    def test_not_owner_can_not_change_book(self, client):
+        books_url = reverse('books-list')
+
+        user_params_owner = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'test'
+        }
+        user_params_not_owner = {
+            'username': 'test_not_owner',
+            'email': 'test@test2.com',
+            'password': 'test'
+        }
+
+        books_create_params = simplejson.dumps({
+            'title': 'Lord of the rings'
+        })
+
+        UserFactory.create(**user_params_owner)
+        UserFactory.create(**user_params_not_owner)
+
+        token_dict_owner = get_login_params_dict(client, user_params_owner)
+
+        client.post(books_url, books_create_params, **token_dict_owner)
+
+        created_book = Book.objects.get(title='Lord of the rings')
+        books_detail = reverse('books-detail', args=[created_book.id])
+
+        user_params_not_owner.pop('email')
+        token_dict_not_owner = get_login_params_dict(client, user_params_not_owner)
+
+        resp = simplejson.loads(
+            client.put(
+                books_detail, simplejson.dumps({'title': 'Hobbit'}), **token_dict_not_owner
+            ).content
+        )
+
+        expected_resp = {'detail': 'You do not have permission to perform this action.'}
+
+        assert resp == expected_resp
+
+    def test_owner_can_change_book(self, client):
+        books_url = reverse('books-list')
+
+        user_params_owner = {
+            'username': 'test',
+            'email': 'test@test.com',
+            'password': 'test'
+        }
+
+        books_create_params = simplejson.dumps({
+            'title': 'Lord of the rings'
+        })
+        new_title = 'Hobbit'
+
+        UserFactory.create(**user_params_owner)
+
+        token_dict_owner = get_login_params_dict(client, user_params_owner)
+
+        client.post(books_url, books_create_params, **token_dict_owner)
+
+        created_book = Book.objects.get(title='Lord of the rings')
+        books_detail = reverse('books-detail', args=[created_book.id])
+
+        token_dict_owner = get_login_params_dict(client, user_params_owner)
+
+        resp = simplejson.loads(
+            client.put(
+                books_detail, simplejson.dumps({'title': new_title}), **token_dict_owner
+            ).content
+        )
+
+        assert resp.get('title') == new_title
