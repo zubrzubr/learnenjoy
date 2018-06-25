@@ -69,7 +69,7 @@ class TestBooksView(object):
 
 @pytest.mark.django_db
 class TestBookDetailView(object):
-    def test_books_detail_view_get_detail_book_page(self, client):
+    def test_books_detail_view_get_detail_book(self, client):
         book_params = {
             'title': 'test',
             'page_count': 500,

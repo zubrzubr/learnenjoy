@@ -9,7 +9,7 @@ class Reward(OwnerModel):
     Rewards's model to present rewards which related to targets
     """
     name = models.CharField(_("Reward's name"), max_length=255)
-    url = models.URLField(_("Link to reward"))
+    url = models.URLField(_("Link to reward"), null=True, blank=True)
 
     def __str__(self):
         return self.name
