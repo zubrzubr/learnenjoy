@@ -5,7 +5,7 @@ from target.views import TargetsViewSet
 
 
 router = routers.DefaultRouter()
-router.register(r'targets', TargetsViewSet, base_name='target_view')
+router.register(r'targets', TargetsViewSet, base_name='targets')
 
 
 urlpatterns = [
