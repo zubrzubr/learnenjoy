@@ -4,7 +4,7 @@ import configurations
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'learntoenjoy.settings')
-os.environ.setdefault('DJANGO_CONFIGURATION', 'TestingSite')
+os.environ.setdefault('DJANGO_CONFIGURATION', 'TestSettings')
 
 
 configurations.setup()
