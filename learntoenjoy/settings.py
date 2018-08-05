@@ -2,13 +2,13 @@ from learntoenjoy.configs.common import BaseSettings
 from learntoenjoy.configs.mixins import DevMixin, ProdMixin, TestingMixin
 
 
-class DevDefaultSite(DevMixin, BaseSettings):
+class DevSettings(DevMixin, BaseSettings):
     pass
 
 
-class ProdDefaultSite(ProdMixin, BaseSettings):
+class ProdSettings(ProdMixin, BaseSettings):
     pass
 
 
-class TestingSite(TestingMixin, DevMixin, BaseSettings):
+class TestSettings(TestingMixin, DevMixin, BaseSettings):
     pass
