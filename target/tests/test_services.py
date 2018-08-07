@@ -19,9 +19,7 @@ class TestProgressService(object):
         )
         target.save()
 
-        date_diff = end_date.date() - today_date.date()
-        pages_per_day = (book.page_count - target.current_page_progress) / date_diff.days
-
         goal_value = ProgressService(target).get_pages_daily_target()
+        expected_result = 50
 
-        assert goal_value == pages_per_day
+        assert goal_value == expected_result
