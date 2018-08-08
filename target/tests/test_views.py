@@ -33,7 +33,10 @@ class TestTargetsView(object):
         resp = simplejson.loads(client.get(targets_url).content)
         resp_keys = resp[0].keys()
 
-        expected_keys = ['title', 'description', 'book', 'current_page_progress', 'start_date', 'end_date', 'reward']
+        expected_keys = [
+            'title', 'description', 'book', 'current_page_progress', 'start_date', 'end_date', 'reward',
+            'pages_per_day',
+        ]
 
         assert expected_keys == list(resp_keys)
 
@@ -79,19 +82,19 @@ class TestTargetsView(object):
 @pytest.mark.django_db
 class TestTargetDetailView(object):
     def test_target_detail_view_get_detail_target(self, client):
-        reward_params = {
+        target_params = {
             'title': 'test',
             'description': 'test test',
         }
 
-        reward = TargetFactory.create(**reward_params)
+        target = TargetFactory.create(**target_params)
 
-        rewards_url = reverse('targets-detail', args=[reward.id])
+        rewards_url = reverse('targets-detail', args=[target.id])
 
         resp = simplejson.loads(client.get(rewards_url).content)
 
-        assert resp['title'] == reward_params['title']
-        assert resp['description'] == reward_params['description']
+        assert resp['title'] == target_params['title']
+        assert resp['description'] == target_params['description']
 
     def test_not_owner_can_not_change_target(self, client):
         targets_url = reverse('targets-list')
@@ -176,3 +179,26 @@ class TestTargetDetailView(object):
         )
 
         assert resp.get('title') == new_title
+
+    def test_detail_target_view_should_contain_pages_per_day(self, client):
+        book = BookFactory.create()
+        book.page_count = 700
+        book.save()
+
+        end_date = datetime.datetime.now() + datetime.timedelta(days=21)
+        params = {
+            'title': 'Test title',
+            'description': 'test',
+            'book': book,
+            'start_date': datetime.datetime.now().strftime('%Y-%m-%d'),
+            'end_date': end_date.strftime('%Y-%m-%d'),
+        }
+
+        target = TargetFactory(**params)
+        target.save()
+
+        targets_url = reverse('targets-detail', args=[target.id])
+
+        resp = simplejson.loads(client.get(targets_url).content)
+
+        assert resp.get('pages_per_day') == 33.3
