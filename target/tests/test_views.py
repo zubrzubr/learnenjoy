@@ -202,3 +202,26 @@ class TestTargetDetailView(object):
         resp = simplejson.loads(client.get(targets_url).content)
 
         assert resp.get('pages_per_day') == 33.3
+
+    def test_detail_target_view_should_contain_pages_per_day_and_return_int(self, client):
+        book = BookFactory.create()
+        book.page_count = 2100
+        book.save()
+
+        end_date = datetime.datetime.now() + datetime.timedelta(days=21)
+        params = {
+            'title': 'Test title',
+            'description': 'test',
+            'book': book,
+            'start_date': datetime.datetime.now().strftime('%Y-%m-%d'),
+            'end_date': end_date.strftime('%Y-%m-%d'),
+        }
+
+        target = TargetFactory(**params)
+        target.save()
+
+        targets_url = reverse('targets-detail', args=[target.id])
+
+        resp = simplejson.loads(client.get(targets_url).content)
+
+        assert resp.get('pages_per_day') == 100
