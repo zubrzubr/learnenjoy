@@ -79,3 +79,5 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+Pipfile.lock

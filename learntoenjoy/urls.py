@@ -22,7 +22,7 @@ api_urls = [
 ]
 
 common_urls = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^secret_magic_room/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url('{}{}'.format(api_v1_pattern, 'docs'), swagger_view),
 ]
