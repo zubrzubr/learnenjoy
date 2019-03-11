@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  pgdatabase:
+    image: postgres:11.2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - db_network
+  backend_app:
+    image: learnenjoy_be
+    command: ["gunicorn", "--chdir", "learntoenjoy", "--bind", ":8000", "learntoenjoy.wsgi:application"]
+    depends_on:
+      - pgdatabase
+    networks:
+      - db_network
+      - nginx_network
+  nginx:
+    image: nginx_learnenjoy
+    ports:
+      - 8000:80
+    depends_on:
+      - backend_app
+    networks:
+      - nginx_network
+
+volumes:
+  postgres_data:
+
+networks:
+  db_network:
+  nginx_network:
