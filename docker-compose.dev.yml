@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  pgdatabase:
+    image: postgres:11.2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    networks:
+      - db_network
+volumes:
+  postgres_data:
+
+networks:
+  db_network:

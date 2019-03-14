@@ -3,7 +3,15 @@ from learntoenjoy.configs.mixins import DevMixin, ProdMixin, TestingMixin
 
 
 class DevSettings(DevMixin, BaseSettings):
-    pass
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'postgres',
+            'USER': 'postgres',
+            'HOST': 'localhost',
+            'PORT': 5432
+        }
+    }
 
 
 class ProdSettings(ProdMixin, BaseSettings):
