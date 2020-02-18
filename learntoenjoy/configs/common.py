@@ -11,7 +11,7 @@ class BaseSettings(Configuration):
     # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = 'rl+uuk+ltt$a5qpbs$xujp8035cwc@tqc4khn)al*3&te(7bo='
+    SECRET_KEY = 'ADD SECRET'
 
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = values.BooleanValue(default=False)
